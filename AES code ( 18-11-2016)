@@ -84,7 +84,7 @@ print("")
 print("Enter the PlainText in hexadecimal: ")
 
 for i=0,(nb*4)-1,1 do
-io.read(in1[i])
+in1[i] = io.read()
 end
 
 
