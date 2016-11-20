@@ -1,12 +1,10 @@
-local nr,nk,tmp,tm,t
-local round
-local input = {}
-local key = {}
-local temp_keyexpansion = {}
-local roundkey = {}
-local state = {{ }}
+local nr,nk,tmp,tm,t,round,in1 = {}
+key = {}
+temp_keyexpansion = {}
+roundkey = {}
+state = {{ }}
 local temp_shiftrows
-local out = {}
+out = {}
 
 
 sbox[256] =   {
@@ -71,7 +69,7 @@ nr = nk+6
 for i=0,(nk*4)-1,1 do 
 
 key[i] = temp[i]
-input[i] = temp2[i]
+in1[i] = temp2[i]
 
 end
 
@@ -86,7 +84,7 @@ print("")
 print("Enter the PlainText in hexadecimal: ")
 
 for i=0,(nb*4)-1,1 do
-io.read(input[i])
+io.read(in1[i])
 end
 
 
@@ -108,6 +106,8 @@ while i<(nb*(nr+1)) do
 
 for j=0,4-1,1 do
 temp_keyexpansion[j]=roundkey[(i-1) * 4 + j]
+end
+
 end
 
 if i%nk==0 then
@@ -152,7 +152,7 @@ end
 for i=0,4-1,1 do
 for j=0,4-1,1 do
 
-state[j][i]  = input[i*4+j]
+state[j][i]  = in1[i*4+j]
 
 end
 end
@@ -162,7 +162,7 @@ end
 for i=0,4-1,1 do
 for j=0,4-1,1 do
 
-local state[[j][i] ^=roundkey[0]
+state[j][i] =state[i][j] ^roundkey[0]
 
 end
 end
@@ -177,7 +177,7 @@ for round=0,nr-1,1 do
 for i=0,4-1,1 do
 for j=0,4-1,1 do
 
-state[i][j] = sbox[state[i][j]
+state[i][j] = sbox[state[i][j]]
 
 end
 end
@@ -208,35 +208,16 @@ state[3][3] = state[3][2]
 state[3][2] = state[3][1]
 state[3][1] = temp_shiftrows
 
+--mixcoloum
 
-for i=0,4-1,1 do
 
-t = state[0][i]
- tmp = state[0][i] ^ state[1][i] ^ state[2][i] ^ state[3][i]
- tm = state[0][i] ^ state[1][i] 
- tm = (tm<<1) ^ (((tm>>7) and 1) * 0x1b)
- state[0][i] ^= tm ^ tmp
-
-tm = state[1][i] ^ state[2][i] 
- tm = (tm<<1) ^ (((tm>>7) and 1) * 0x1b)
-  state[1][i] ^= tm ^ tmp 
-
-tm = state[2][i] ^ state[3][i] 
- tm = (tm<<1) ^ (((tm>>7) and 1) * 0x1b)
-  state[2][i] ^= tm ^ tmp 
-
-  tm = state[3][i] ^ t 
-   tm = (tm<<1) ^ (((tm>>7) and 1) * 0x1b)
-    state[3][i] ^= tm ^ tmp ;
-
-end
 
 --addroundkey(int round)
 
 for i=0,4-1,1 do
 for j=0,4-1,1 do
 
-state[j][i] ^= roundkey[round * nb * 4 + i * nb + j];
+state[j][i] =state[j][i] ^ roundkey[round * nb * 4 + i * nb + j];
 
 end
 end
@@ -247,13 +228,15 @@ end
 --The last round is given below.
 --The MixColumns function is not here in the last round.
 
---SubBytes()
+
 for round=0,nr-1,1 do
+
+--SubBytes()
 
 for i=0,4-1,1 do
 for j=0,4-1,1 do
 
-state[i][j] = sbox[state[i][j]
+state[i][j] = sbox[state[i][j]]
 
 end
 end
@@ -286,16 +269,44 @@ state[3][2] = state[3][1]
 state[3][1] = temp_shiftrows
 
 
+--mixcoloum
+
+
+for i=0,4-1,1 do
+
+t = state[0][i]
+ tmp = state[0][i] ^ state[1][i] ^ state[2][i] ^ state[3][i]
+ tm = state[0][i] ^ state[1][i] 
+ tm = bit.lshift(tm, 1)  ^ (( bit.rshift(tm, 7)  and 1) * 0x1b)
+ state[0][i] =state[0][i] ^ tm ^ tmp
+
+tm = state[1][i] ^ state[2][i] 
+ tm = bit.lshift(tm, 1)  ^ (( bit.rshift(tm, 7)  and 1) * 0x1b)
+  state[1][i] =state[1][i] ^ tm ^ tmp 
+
+tm = state[2][i] ^ state[3][i] 
+ tm = bit.lshift(tm, 1)  ^ (( bit.rshift(tm, 7)  and 1) * 0x1b)
+  state[2][i] =  state[2][i] ^ tm ^ tmp 
+
+  tm = state[3][i] ^ t 
+   tm = bit.lshift(tm, 1)  ^ (( bit.rshift(tm, 7)  and 1) * 0x1b)
+    state[3][i] =   state[3][i] ^ tm ^ tmp ;
+
+end
+
+
+
 --addroundkey(int nr)
 
 for i=0,4-1,1 do
 for j=0,4-1,1 do
 
-state[j][i] ^= roundkey[nr * nb * 4 + i * nb + j];
+state[j][i] =state[j][i] ^ roundkey[nr * nb * 4 + i * nb + j];
 
 end
 end
 
+end--round for loop 
 --The encryption process is over.
 --Copy the state array to output array.
 
@@ -311,7 +322,7 @@ end
 print("")
 print("Text after encryption:")
 
-for i=0,nb*4-1,1 do
+for i=0,nb*4,1 do
 
 print("")
 print(out[i])
