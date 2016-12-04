@@ -1,0 +1,241 @@
+require("uci")
+local t,cak,dmz_host_ip1
+x = uci.cursor()
+local weekdays = {}
+local _weekdays={}
+local re_weekdays_fun={}
+local mon1,tue1,wed1,thu1,fri1,sat1,sun1={},{},{},{},{},{},{}
+
+m = Map("access_control" , "") -- We want to edit the uci config file /etc/config/network
+s = m:section(NamedSection, "general","","","") -- Especially the "interface"-sections
+
+list = s:option(Value, "anonymouse", "") -- or whatever creating a Value
+list.template = "security_page/security_page"
+
+function get_name(name)
+    local v = _G
+    if name=="" then
+        return ""
+    end
+    for i in name.gfind(name , "[%w_]+") do
+        v = i
+    end
+    return v
+end
+
+
+function get_src_mac(mac)
+    local v = _G
+    if mac=="" then
+        return 0
+    end
+    for i in mac.gfind(mac , "[%d_]+") do
+        v = i
+    end
+    return v
+end
+
+
+function mysplit(s)
+    local words = {}
+    local i=1
+    if type(s)=="nil" then return {} end
+    for word in s:gmatch("%w+") do
+        table.insert(words, word)
+    end
+    return words
+end
+
+
+function weekdays_fun(week)
+    local weekdays_str=""
+    if type(week)=="table" then
+        weekdays_str=" "..table.concat(week," ").." "
+    end
+    return weekdays_str
+end
+
+submit = luci.http.formvalue("cbi.apply") or ""
+
+x:foreach("network1", "redirect", function(s)
+	if s.name=="dmz" then
+name_dmz_table=s[".name"]
+dmz=1
+	end
+end)
+
+
+if submit ~= "" then
+
+
+    description1= luci.http.formvalue("description1") or ""
+    src_mac1  = luci.http.formvalue("mac_address1") or ""
+    start_time1 = luci.http.formvalue("start_time1") or ""
+    end_time1 = luci.http.formvalue("end_time1") or ""
+    enabled1 = luci.http.formvalue("cbid.access_control.general.enabled") or ""
+    dmz_host_ip1 = luci.http.formvalue("dmz_host_ip1") or ""
+    enabled_dmz = luci.http.formvalue("dmzstatus") or ""
+
+
+if dmz~=1 then
+
+	name_dmz_table = x:add("network1", "redirect")
+    x:set("network1", name_dmz_table, "name","dmz")
+    x:set("network1", name_dmz_table, "src","wan")
+    x:set("network1", name_dmz_table, "proto","all")
+    s_ip = x:set("network1", name_dmz_table, "dest_ip",dmz_host_ip1)
+    s_enabled_dmz = x:set("network1", name_dmz_table, "enabled",enabled_dmz)
+    x:save("network1")
+    x:commit("network1")
+
+	else
+
+     s_ip = x:set("network1", name_dmz_table, "dest_ip",dmz_host_ip1)
+     s_enabled_dmz = x:set("network1", name_dmz_table, "enabled",enabled_dmz)
+      x:save("network1")
+      x:commit("network1")
+
+end
+
+
+
+    if type(description1) == "table" then
+        for i=1,table.getn(description1),1 do
+            weekdays[i] = luci.http.formvalue("weekdays"..i)
+        end
+
+        for i=1,table.getn(description1),1 do
+		if type(weekdays[i])=="table" then
+            		re_weekdays_fun[i] = weekdays_fun(weekdays[i])
+		else
+			re_weekdays_fun[i] = weekdays[i] or "nil"
+
+		end
+        end
+
+    end
+
+
+    if type(description1) ~= "table" then
+
+        test_name = get_name(description1)
+
+    end
+
+    if type(src_mac1) ~= "table" then
+        test_src_mac  = get_src_mac (src_mac1)
+    end
+
+
+    if type(description1) == "table" then
+        if type(description1)=="" or table.getn(description1)<2 then
+            _msg= "invalid name"
+        end
+    end
+
+    if type(src_mac1) == "table" then
+        if table.getn(src_mac1)~=11 then
+            _msg = "invalid mac Address"
+        end
+    end
+
+    --list.name = get_name(person_name)
+    --list.phone_number = get_phone_number(phone_number)
+    --list.age = get_age(age)
+    --list.university = get_university(university)
+
+    local dmz_cak=1
+
+    if g~=nil and h~=nil and k~=nil then
+    dmz_cak=2
+    end
+
+
+
+
+    if type(description1) == "table" then
+
+        s_a = x:set("network1", "table", "name", description1)
+        s_b = x:set("network1", "table", "src_mac1",src_mac1  )
+        s_c = x:set("network1", "table", "start_time",start_time1)
+        s_d = x:set("network1", "table", "stop_time",end_time1)
+        s_e = x:set("network1", "table", "enabled",enabled1)
+        s_weekdays = x:set("network1", "table","weekdays",re_weekdays_fun)
+
+        x:save("network1")
+        x:commit("network1")
+
+    else if test_name~="" and  type(description1) ~= "table" then
+
+        s_a = x:set("network1", "table", "name", description1)
+        s_b = x:set("network1", "table", "src_mac1",src_mac1  )
+        s_c = x:set("network1", "table", "start_time",start_time1)
+        s_d = x:set("network1", "table", "stop_time",end_time1)
+        s_e = x:set("network1", "table", "enabled",enabled1)
+        s_weekdays = x:set("network1", "table","weekdays",weekdays)
+
+        x:save("network1")
+        x:commit("network1")
+
+    end
+    end
+
+
+
+end ------add
+
+
+a = x:get("network1", "table", "name")
+b = x:get("network1", "table", "src_mac1" )
+c = x:get("network1", "table", "start_time" )
+d = x:get("network1", "table", "stop_time")
+e = x:get("network1", "table", "enabled")
+f = x:get("network1","table",  "weekdays")
+g = x:get("network1",name_dmz_table,  "dest_ip")
+h = x:get("network1",name_dmz_table,  "enabled")
+
+
+for i=1,table.getn(a),1 do
+  _weekdays[i] = mysplit(f[i])
+
+	for j=1,7,1 do
+	    if _weekdays[i][j] == "mon" then mon1[i] = "checked='checked' " end
+	    if _weekdays[i][j] == "thu" then thu1[i] = "checked='checked' " end
+	    if _weekdays[i][j] == "sat" then sat1[i] = "checked='checked' " end
+	    if _weekdays[i][j] == "sun" then sun1[i] = "checked='checked' " end
+	    if _weekdays[i][j] == "wed" then wed1[i] = "checked='checked' " end
+	    if _weekdays[i][j] == "tue" then tue1[i] = "checked='checked' " end
+	    if _weekdays[i][j] == "fri" then fri1[i] = "checked='checked' " end
+	end
+end
+
+
+if e=="1" then
+    _enabled=" checked='checked' "
+else
+    _enabled=""
+end
+
+
+local h_dis
+
+if h=="1" then
+	h="checked='checked'"
+else
+	h=""
+	h_dis = "checked='checked'"
+end
+
+
+local test_name,test_src_mac,start_time,stop_time,enabled,monday,tuesday,wednesday,thusday,friday,satarday,sunday,dmz_enabled,dmz_dest_ip,dmz_disabled
+
+
+if type(a) == "table" then
+    list.data = {test_name = a, test_src_mac = b, start_time=c, stop_time=d ,enabled = _enabled , monday = mon1, tuesday = tue1, wednesday = wed1, thursday = thu1, friday =fri1, saturday =sat1, sunday = sun1 ,dmz_enabled = h,dmz_disabled = h_dis ,dmz_dest_ip = g, msg=_msg}
+end
+
+
+return m
+
+
+
