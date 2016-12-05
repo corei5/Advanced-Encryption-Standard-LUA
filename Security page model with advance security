@@ -1,6 +1,6 @@
 require("uci")
 x = uci.cursor()
-local ad_sec,t,cak,dmz_host_ip1,dmz_chk=1,h_dis,test_name,test_src_mac,start_time,stop_time,enabled,monday,tuesday,wednesday,thusday,friday,satarday,sunday,dmz_enabled,dmz_dest_ip,dmz_disabled,synflood_rate1,get_syn_flood,get_synflood_rate,get_synflood_burst
+local ad_sec,t,cak,dmz_host_ip1,dmz_chk=1,h_dis,test_name,test_src_mac,start_time,stop_time,enabled,monday,tuesday,wednesday,thusday,friday,satarday,sunday,dmz_enabled,dmz_dest_ip,dmz_disabled,synflood_rate1,get_syn_flood,get_synflood_rate,get_synflood_burst,test_syn_flood,test_synflood_rate,test_synflood_burst,test_dis_get_syn_flood
 local mon1,tue1,wed1,thu1,fri1,sat1,sun1, weekdays,_weekdays,re_weekdays_fun={},{},{},{},{},{},{},{},{},{}
 
 ad_sec=2
@@ -177,13 +177,14 @@ f = x:get("network1","table",  "weekdays")
 g = x:get("network1",name_dmz_table,  "dest_ip")
 h = x:get("network1",name_dmz_table,  "enabled")
 
- if type(syn_flood) ~= "nil" and type(synflood_rate) ~= "nil" and type(synflood_burst) ~= "nil" then
-
-  get_syn_flood = x:get("network1",name_defaults_table,  "syn_flood")
-  get_synflood_rate =x:get("network1",name_defaults_table,  "synflood_rate")
-  get_synflood_burst =x:get("network1",name_defaults_table,  "synflood_burst")
-
+ if syn_flood ~= "nil" and synflood_rate ~= "nil" and synflood_burst ~= "nil" then
+   get_syn_flood = x:get("network1",name_defaults_table,  "syn_flood")
+   get_synflood_rate =x:get("network1",name_defaults_table,  "synflood_rate")
+   get_synflood_burst =x:get("network1",name_defaults_table,  "synflood_burst")
  end
+
+
+
 
  for i=1,table.getn(get_name),1 do
   _weekdays[i] = split(f[i])
@@ -198,7 +199,7 @@ h = x:get("network1",name_dmz_table,  "enabled")
 	end
  end
 
- if e=="1" then
+ if e=="1"  then
     _enabled=" checked='checked' "
  else
     _enabled=""
@@ -211,8 +212,20 @@ h = x:get("network1",name_dmz_table,  "enabled")
 	h_dis = "checked='checked'"
  end
 
+ if get_syn_flood=="1" then
+ 	get_syn_flood="checked='checked'"
+  else
+ 	get_syn_flood=""
+ 	dis_get_syn_flood = "checked='checked'"
+  end
+
+
+
  if type(get_name) == "table" then
-    list.data = {test_name = get_name, test_src_mac = get_mac, start_time=c, stop_time=d ,enabled = _enabled , monday = mon1, tuesday = tue1, wednesday = wed1, thursday = thu1, friday =fri1, saturday =sat1, sunday = sun1 ,dmz_enabled = h,dmz_disabled = h_dis ,dmz_dest_ip = g, msg=_msg}
+    list.data = {test_name = get_name, test_src_mac = get_mac, start_time=c, stop_time=d ,enabled = _enabled , monday = mon1, tuesday = tue1, wednesday = wed1, thursday = thu1, friday =fri1, saturday =sat1, sunday = sun1 ,dmz_enabled = h,dmz_disabled = h_dis ,dmz_dest_ip = g,test_syn_flood = get_syn_flood,test_dis_get_syn_flood =dis_get_syn_flood ,test_synflood_rate =get_synflood_rate ,test_synflood_burst = get_synflood_burst , msg=_msg}
  end
+
+
+
 
 return m
