@@ -1,0 +1,218 @@
+require("uci")
+x = uci.cursor()
+local ad_sec,t,cak,dmz_host_ip1,dmz_chk=1,h_dis,test_name,test_src_mac,start_time,stop_time,enabled,monday,tuesday,wednesday,thusday,friday,satarday,sunday,dmz_enabled,dmz_dest_ip,dmz_disabled,synflood_rate1,get_syn_flood,get_synflood_rate,get_synflood_burst
+local mon1,tue1,wed1,thu1,fri1,sat1,sun1, weekdays,_weekdays,re_weekdays_fun={},{},{},{},{},{},{},{},{},{}
+
+ad_sec=2
+
+m = Map("access_control" , "") -- We want to edit the uci config file /etc/config/network
+s = m:section(NamedSection, "general","","","") -- Especially the "interface"-sections
+
+list = s:option(Value, "anonymouse", "") -- or whatever creating a Value
+list.template = "security_page/security_page"
+
+submit = luci.http.formvalue("cbi.apply") or ""
+
+function split(s)
+    local words = {}
+    local i=1
+    if type(s)=="nil" then return {} end
+    for word in s:gmatch("%w+") do
+        table.insert(words, word)
+    end
+    return words
+end
+
+function weekdays_fun(week)
+    local weekdays_str=""
+    if type(week)=="table" then
+        weekdays_str=" "..table.concat(week," ").." "
+    end
+    return weekdays_str
+end
+
+x:foreach("network1", "redirect", function(s)
+	if s.name=="dmz" then
+name_dmz_table=s[".name"]
+dmz=1
+	end
+end)
+
+x:foreach("network1", "defaults", function(s)
+	if s.syn_flood=="0" or s.syn_flood=="1" then
+name_defaults_table=s[".name"]
+ad_sec=1
+	end
+end)
+
+
+ if submit ~= "" then
+
+    description1= luci.http.formvalue("description1") or ""
+    src_mac1  = luci.http.formvalue("mac_address1") or ""
+    start_time1 = luci.http.formvalue("start_time1") or ""
+    end_time1 = luci.http.formvalue("end_time1") or ""
+    enabled1 = luci.http.formvalue("cbid.access_control.general.enabled") or ""
+    dmz_host_ip1 = luci.http.formvalue("dmz_host_ip1") or ""
+    enabled_dmz = luci.http.formvalue("dmzstatus") or ""
+    dos = luci.http.formvalue("dos") or ""
+    synflood_rate1 = luci.http.formvalue("synflood_rate1") or ""
+    synflood_burst1 = luci.http.formvalue("synflood_burst1") or ""
+
+
+   -- print("")
+    --print("synflood_rate1: ",synflood_rate1)
+    --os.exit(1)
+
+
+  if dmz~=1 then
+
+	    name_dmz_table = x:add("network1", "redirect")
+        x:set("network1", name_dmz_table, "name","dmz")
+        x:set("network1", name_dmz_table, "src","wan")
+        x:set("network1", name_dmz_table, "proto","all")
+        s_ip = x:set("network1", name_dmz_table, "dest_ip",dmz_host_ip1)
+        s_enabled_dmz = x:set("network1", name_dmz_table, "enabled",enabled_dmz)
+        x:save("network1")
+        x:commit("network1")
+	else
+        s_ip = x:set("network1", name_dmz_table, "dest_ip",dmz_host_ip1)
+        s_enabled_dmz = x:set("network1", name_dmz_table, "enabled",enabled_dmz)
+        x:save("network1")
+        x:commit("network1")
+  end
+
+  if ad_sec~=1 then
+
+        name_defaults_table = x:add("network1","defaults")
+        x:set("network1", name_defaults_table, "syn_flood","0")
+        x:set("network1", name_defaults_table, "synflood_rate","25")
+        x:set("network1", name_defaults_table, "synflood_burst","50")
+        x:save("network1")
+        x:commit("network1")
+
+
+
+
+  else
+        x:set("network1", name_defaults_table, "syn_flood",dos)
+        x:set("network1", name_defaults_table, "synflood_rate",synflood_rate1)
+        x:set("network1", name_defaults_table, "synflood_burst",synflood_burst1)
+        x:save("network1")
+        x:commit("network1")
+  end
+
+
+
+
+
+
+    if type(description1) == "table" then
+        for i=1,table.getn(description1),1 do
+            weekdays[i] = luci.http.formvalue("weekdays"..i)
+        end
+
+        for i=1,table.getn(description1),1 do
+		if type(weekdays[i])=="table" then
+                re_weekdays_fun[i] = weekdays_fun(weekdays[i])
+		else
+			    re_weekdays_fun[i] = weekdays[i] or "nil"
+		end
+        end
+    end
+
+    if type(description1) ~= "table" then
+            test_name = get_name(description1)
+    end
+
+    if type(src_mac1) ~= "table" then
+        test_src_mac  = get_src_mac (src_mac1)
+    end
+
+    if type(description1) == "table" then
+        if type(description1)=="" or table.getn(description1)<2 then
+            _msg= "invalid name"
+        end
+    end
+
+    if type(src_mac1) == "table" then
+        if table.getn(src_mac1)~=11 then
+            _msg = "invalid mac Address"
+        end
+    end
+
+    if g~=nil and h~=nil and k~=nil then
+        dmz_chk=2
+    end
+
+    if type(description1) == "table" then
+        s_a = x:set("network1", "table", "name", description1)
+        s_b = x:set("network1", "table", "src_mac1",src_mac1  )
+        s_c = x:set("network1", "table", "start_time",start_time1)
+        s_d = x:set("network1", "table", "stop_time",end_time1)
+        s_e = x:set("network1", "table", "enabled",enabled1)
+        s_weekdays = x:set("network1", "table","weekdays",re_weekdays_fun)
+        x:save("network1")
+        x:commit("network1")
+
+    else if test_name~="" and  type(description1) ~= "table" then
+        s_a = x:set("network1", "table", "name", description1)
+        s_b = x:set("network1", "table", "src_mac1",src_mac1  )
+        s_c = x:set("network1", "table", "start_time",start_time1)
+        s_d = x:set("network1", "table", "stop_time",end_time1)
+        s_e = x:set("network1", "table", "enabled",enabled1)
+        s_weekdays = x:set("network1", "table","weekdays",weekdays)
+        x:save("network1")
+        x:commit("network1")
+    end
+    end
+end
+
+get_name = x:get("network1", "table", "name")
+get_mac = x:get("network1", "table", "src_mac1" )
+c = x:get("network1", "table", "start_time" )
+d = x:get("network1", "table", "stop_time")
+e = x:get("network1", "table", "enabled")
+f = x:get("network1","table",  "weekdays")
+g = x:get("network1",name_dmz_table,  "dest_ip")
+h = x:get("network1",name_dmz_table,  "enabled")
+
+ if type(syn_flood) ~= "nil" and type(synflood_rate) ~= "nil" and type(synflood_burst) ~= "nil" then
+
+  get_syn_flood = x:get("network1",name_defaults_table,  "syn_flood")
+  get_synflood_rate =x:get("network1",name_defaults_table,  "synflood_rate")
+  get_synflood_burst =x:get("network1",name_defaults_table,  "synflood_burst")
+
+ end
+
+ for i=1,table.getn(get_name),1 do
+  _weekdays[i] = split(f[i])
+	for j=1,7,1 do
+	    if _weekdays[i][j] == "mon" then mon1[i] = "checked='checked' " end
+	    if _weekdays[i][j] == "thu" then thu1[i] = "checked='checked' " end
+	    if _weekdays[i][j] == "sat" then sat1[i] = "checked='checked' " end
+	    if _weekdays[i][j] == "sun" then sun1[i] = "checked='checked' " end
+	    if _weekdays[i][j] == "wed" then wed1[i] = "checked='checked' " end
+	    if _weekdays[i][j] == "tue" then tue1[i] = "checked='checked' " end
+	    if _weekdays[i][j] == "fri" then fri1[i] = "checked='checked' " end
+	end
+ end
+
+ if e=="1" then
+    _enabled=" checked='checked' "
+ else
+    _enabled=""
+ end
+
+ if h=="1" then
+	h="checked='checked'"
+ else
+	h=""
+	h_dis = "checked='checked'"
+ end
+
+ if type(get_name) == "table" then
+    list.data = {test_name = get_name, test_src_mac = get_mac, start_time=c, stop_time=d ,enabled = _enabled , monday = mon1, tuesday = tue1, wednesday = wed1, thursday = thu1, friday =fri1, saturday =sat1, sunday = sun1 ,dmz_enabled = h,dmz_disabled = h_dis ,dmz_dest_ip = g, msg=_msg}
+ end
+
+return m
