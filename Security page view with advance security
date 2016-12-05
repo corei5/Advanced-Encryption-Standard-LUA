@@ -1,0 +1,249 @@
+<style>
+    div.checker input {
+        -webkit-appearance:checkbox
+    }
+
+    div.checker input {
+        opacity:1
+    }
+</style>
+
+
+<script>
+
+    $(document).ready(function(){
+
+
+        $(".tr_clone_add").on('click', function() {
+            //var $tr    = $("#rule-table").find('.tr_clone');
+            //alert("1")
+
+            var $tr = $( "tr:nth-child(2)" )
+            var $clone = $tr.clone();
+            //$clone.find(':text').val('');
+            $clone.find('[type="text"]').val('');
+            $clone.find('[type="time"]').val('');
+            $clone.find('.button_cla').val('Delete');
+            $clone.find('.cbi-input-checkbox').removeAttr('checked');
+            $clone.find('.cbi-input-checkbox').attr('name','weekdays' + ($('.tr_clone').length + 1) )
+
+
+            //console.log($clone)
+
+            $("tr:nth-last-child(1)").after($clone);
+
+        });
+    });
+
+
+
+    function SomeDeleteRowFunction(o) {
+        var l = document.getElementsByClassName("tr_clone");
+        if(l.length > 1) {
+            var p = o.parentNode.parentNode;
+            p.parentNode.removeChild(p);
+        }
+        else {
+            alert('Atleast 1 row exists')
+        }
+    }
+
+
+  $(document).ready(function(){
+        var hash_id = window.location.hash.replace('#','');
+        if(hash_id.length > 0) {
+            $('.security-nav-tabs').removeClass('active')
+            $('li[data-id='+hash_id+']').addClass('active')
+            $('.security-details').addClass('hidden')
+            $('div[data-id='+hash_id+']').removeClass('hidden')
+        }
+
+        $('.security-nav-tabs').on('click', function(){
+            //alert($(this).data('id'))
+            $('.security-nav-tabs').removeClass('active')
+            $(this).addClass('active')
+            $('.security-details').addClass('hidden')
+            $("."+$(this).data('id')).removeClass('hidden')
+        })
+    })
+
+
+</script>
+
+
+
+<ul class="nav nav-tabs security-tabs">
+    <li class="security-nav-tabs active" data-id="section1"><a href="#section1">Security Page</a></li>
+    <li class="security-nav-tabs" data-id="section2"><a href="#section2">DMZ</a></li>
+    <li class="security-nav-tabs" data-id="section2"><a href="#section3">Advance security</a></li>
+</ul>
+
+
+<div class="section1 security-details hidden" data-id="section1">
+    <section class="content-header page-title">
+        <h1>Security Page</h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i>SP</a></li>
+            <li class="active">SP Settings</li>
+        </ol>
+    </section>
+
+
+    <p xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
+       xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">Access Control allows you to manage internet access for specific local hosts.<br>Each rule defines which user has blocked access to the internet.The rules may be active permanently or in certain time of day.</br>The rules may also be restricted to specific days of the week.</br></p>
+
+
+
+    <legend>General switch</legend>
+    <div class="cbi-section-node" id="cbi-access_control-general">
+        <div class="cbi-value cbi-value-last" id="cbi-access_control-general-enabled"><label class="cbi-value-title" for="cbid.access_control.general.enabled">Enabled</label>
+            <div class="cbi-value-field">
+                <input value="1" name="cbi.cbe.access_control.general.enabled" type="hidden">
+                <div class="checker" id="uniform-cbid.access_control.general.enabled"><span class="checked"><input class="cbi-input-checkbox" onclick="cbi_d_update(this.id)" onchange="cbi_d_update(this.id)" <%=self.data.enabled%>id="cbid.access_control.general.enabled" name="cbid.access_control.general.enabled" value="1"  type="checkbox"></span></div>
+            </div></div>
+    </div>
+    <br>
+
+
+
+    <legend>Client Rules</legend>
+
+    <table style="width:100%" id="rule-table">
+        <tr>
+            <th>Enabled</th>
+            <th>Description</th>
+            <th>MAC address</th>
+            <th>Start time</th>
+            <th>End time</th>
+            <th>M</th>
+            <th>T</th>
+            <th>W</th>
+            <th>T</th>
+            <th>F</th>
+            <th>S</th>
+            <th>S</th>
+        </tr>
+
+
+
+        <%
+
+        if self.data ~=nil and type(self.data.test_name) == "table" then
+
+        length = table.getn(self.data.test_name)
+
+        for i=1,length do
+        chk_mon=self.data.monday[i] or ""
+        chk_tue=self.data.tuesday[i] or ""
+        chk_wed=self.data.wednesday[i] or ""
+        chk_thu=self.data.thursday[i] or ""
+        chk_fri=self.data.friday[i] or ""
+        chk_sat=self.data.saturday[i] or ""
+        chk_sun=self.data.sunday[i] or ""
+        print('<tr class="tr_clone"><td class="cbi-value-field"><div><div class="checker"><span class="checked"><input class="cbi-input-checkbox" name="enabled" ' .. self.data.enabled .. ' value="1" type="checkbox"></span>  </div></div></td><td><input type="text" name="description1" required11 value="' .. self.data.test_name[i] .. '"></td><td> <input type="text" name="mac_address1" required1 value="' .. self.data.test_src_mac[i] .. '"></td><td><input type="time" name="start_time1" required12 value="' .. self.data.start_time[i]..'"></td><td><input type="time" name="end_time1" required13 value="' .. self.data.stop_time[i] ..  '"></td><td class="cbi-value-field"><div><div class="checker"><span class="checked"><input class="cbi-input-checkbox" name="weekdays'..i..'" ' .. chk_mon ..  '  value="mon"  type="checkbox"></span></div></div></td><td class="cbi-value-field"><div><div class="checker"><span class="checked"><input class="cbi-input-checkbox" name="weekdays'..i..'" ' .. chk_tue ..  '  value="tue"  type="checkbox"></span></div></div></td><td class="cbi-value-field"><div><div class="checker"><span class="checked"><input class="cbi-input-checkbox" name="weekdays'..i..'" ' .. chk_wed ..  '  value="wed"  type="checkbox"></span></div></div></td><td class="cbi-value-field"><div><div class="checker"><span class="checked"><input class="cbi-input-checkbox" name="weekdays'..i..'" ' .. chk_thu ..  '  value="thu"  type="checkbox"></span></div></div></td><td class="cbi-value-field"><div><div class="checker"><span class="checked"><input class="cbi-input-checkbox" name="weekdays'..i..'" ' .. chk_fri ..  '  value="fri" type="checkbox"></span></div></div></td><td class="cbi-value-field"><div><div class="checker"><span class="checked"><input class="cbi-input-checkbox" name="weekdays'..i..'" ' .. chk_sat ..  '  value="sat"  type="checkbox"></span></div></div></td><td class="cbi-value-field"><div><div class="checker"><span class="checked"><input class="cbi-input-checkbox" name="weekdays'..i..'" ' .. chk_sun ..  '  value="sun"  type="checkbox"></span></div></div><input type="button" class="button_cla" value="Delete" onclick=" SomeDeleteRowFunction(this)"></td></tr>')
+        end
+
+        else
+        print('<tr class="tr_clone"><td class="cbi-value-field"><div><div class="checker"><span class="checked"><input class="cbi-input-checkbox" name="enabled"  value="" type="checkbox"></span>  </div></div></td><td><input type="text" name="description1" required1 value=""></td><td> <input type="text" name="mac_address1" required1 value=""></td><td><input type="time" name="start_time1" required1 value=""></td><td><input type="time" name="end_time1" required1 value=""></td><td class="cbi-value-field"><div><div class="checker"><span class="checked"><input class="cbi-input-checkbox" name="weekdays" value="mon"  type="checkbox"></span></div></div></td><td class="cbi-value-field"><div><div class="checker"><span class="checked"><input class="cbi-input-checkbox" name="weekdays" value="tue"  type="checkbox"></span></div></div></td><td class="cbi-value-field"><div><div class="checker"><span class="checked"><input class="cbi-input-checkbox" name="weekdays" value="wed"  type="checkbox"></span></div></div></td><td class="cbi-value-field"><div><div class="checker"><span class="checked"><input class="cbi-input-checkbox" name="weekdays" value="thu"  type="checkbox"></span></div></div></td><td class="cbi-value-field"><div><div class="checker"><span class="checked"><input class="cbi-input-checkbox" name="weekdays" value="fri" type="checkbox"></span></div></div></td><td class="cbi-value-field"><div><div class="checker"><span class="checked"><input class="cbi-input-checkbox" name="weekdays" value="sat"  type="checkbox"></span></div></div></td><td class="cbi-value-field"><div><div class="checker"><span class="checked"><input class="cbi-input-checkbox" name="weekdays" value="sun"  type="checkbox"></span></div></div><input type="button" class="button_cla" value="Delete" onclick=" SomeDeleteRowFunction(this)"></td></tr>')
+
+        end
+        %>
+
+
+
+    </table>
+
+    <input type="button"  value="Add" name="" title="Add" class="tr_clone_add"  >
+
+
+
+</div>
+
+<div class="section2 security-details" data-id="section2">
+
+
+
+
+    <section class="content-header page-title">
+        <h1>DMZ</h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i>Forwarding</a></li>
+            <li class="active">DMZ</li>
+        </ol>
+    </section>
+
+  
+
+
+
+
+    <fieldset>
+        <div class="col-sm-6"><label>Current DMZ Status :</label></div>
+        <div class="col-sm-6">
+            <dd class="selected">
+                <div class="skin-section">
+                    <ul class="list">
+                        <li>
+                            <div class="radio" id="uniform-dmzstatus-radio-1"><input type="radio" id="dmzstatus-radio-1" name="dmzstatus"  <%=self.data.dmz_disabled%>  value="0"></span></div>
+                            <label for="dmzstatus-radio-1">Disable</label>
+                        </li>
+                        <li>
+                            <div class="radio" id="uniform-dmzstatus-radio-2"><input type="radio" id="dmzstatus-radio-2" name="dmzstatus" <%=self.data.dmz_enabled%> value="1"></span></div>
+                            <label for="dmzstatus-radio-2">Enable</label>
+                        </li>
+
+                    </ul>
+                </div>
+
+            </dd>
+
+        </div>
+    </fieldset>
+
+
+    <fieldset>
+        <div class="col-sm-6"><label>DMZ Host IP Address :</label></div>
+        <div class="col-sm-6"><input type="text" name="dmz_host_ip1" class="form-control" placeholder="0.0.0.0" value="<%=self.data.dmz_dest_ip%>"></div>
+    </fieldset>
+
+
+
+
+
+
+</div>
+
+<div class="section3 security-details" data-id="section3">
+
+
+    <section class="content-header page-title">
+        <h1>Advanced Security</h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i>Security</a></li>
+            <li class="active">Advanced Security</li>
+        </ol>
+    </section>
+
+    <div class="form-group">
+        <label>DoS Protection:</label>
+        <div class="radio"><span><input type="radio" class="dos-protection" name="dos" required value="0"></span></div> <span>Disable</span>
+        <div class="radio"><span><input type="radio" class="dos-protection" name="dos" required value="1"></span></div> <span>Enable</span>
+    </div>
+
+
+    <fieldset>
+        <div class="col-sm-4"> <span><b>Synflood Rate (25 ~ ) : </b></span></div>
+        <span>Packets/Secs</span>
+        <div class="col-sm-4"><input type="text" name="synflood_rate1"  placeholder="25" value=""></div>
+    </fieldset>
+
+
+
+    <fieldset>
+        <div class="col-sm-4"> <span><b>Synflood Burst (50 ~ ) : </b></span></div>
+        <span>Packets/Secs</span>
+        <div class="col-sm-4"><input type="text" name="synflood_burst1"  placeholder="50" value=""></div>
+    </fieldset>
+
+
+</div>
