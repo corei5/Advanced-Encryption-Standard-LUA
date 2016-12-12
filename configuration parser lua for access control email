@@ -1,0 +1,66 @@
+local util=require"luci.util"
+file = io.open("/etc/config/access_control", "r")
+--local content = file:read("*line") 
+--file:close()
+
+local arr = {}
+local count = 1
+local email_settings=0
+local array_length
+
+while true do
+ local line = file:read("*line")
+ if line == nil then break end
+
+for line in file:lines() do
+ if string.find(line,"'email_settings'")  then
+  	print("I found Email Settings. " .. count)
+  	email_settings=1
+ end
+
+ if email_settings==1 and string.find(line,"weekday") then
+	words=util.split(line," ")
+	arr['weekday']=words[3]
+ end
+
+ if email_settings==1 and string.find(line,"time_mode") then
+	words=util.split(line," ")
+	arr['time_mode']=words[3]
+ end
+
+ if email_settings==1 and string.find(line,"time") then
+    	words=util.split(line," ")
+    	arr['time']=words[3]
+     end
+
+
+ if email_settings==1 and string.find(line,"mode") then
+  	words=util.split(line," ")
+  	arr['mode']=words[3]
+ end
+
+ if email_settings==1 and string.find(line,"email_address") then
+   	words=util.split(line," ")
+   	arr['email_address']=words[3]
+  end
+
+ if email_settings==1 and string.find(line,"notification_status") then
+    	words=util.split(line," ")
+    	arr['notification_status']=words[3]
+   end
+
+
+ end
+ count = count + 1
+end
+
+
+print(arr.weekday)
+
+
+
+
+file:close()
+
+
+--print(content)
