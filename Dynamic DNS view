@@ -1,0 +1,132 @@
+<!--
+<%
+function is_selected(name,val)
+local ret = ""
+name = name:gsub("-","_")
+if self.data[name] == val then
+ret = " selected "
+end
+return ret
+end
+
+
+%>
+-->
+
+<section class="content-header page-title" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+    <h1>Dynamic DNS</h1>
+</section>
+
+<legend>Overview</legend>
+
+<div class="disc">Below is a list of configured DDNS configurations and their current state.
+    <br>If you want to send updates for IPv4 and IPv6 you need to define two separate Configurations i.e. 'myddns_ipv4' and 'myddns_ipv6'<br>
+    <a href="http://192.168.11.150/cgi-bin/luci/;stok=7e05d204b3fe205fd9caa731e0496e47/admin/dynamic_dns_rabby">To change global settings click here</a>
+</div>
+
+<table id="rule-table">
+    <tr>
+        <th>Configuration</th>
+        <th>Lookup Hostname Registered IP</th>
+        <th>Enabled</th>
+        <th>Last Update Next Update	Process ID Start / Stop	</th>
+    </tr>
+</table>
+
+
+
+<input type="text" name="description1" required1="" value="go to Dynamic DNS">
+<input type="button" onclick="location.href='http://facebook.com';" value="Add" />
+
+
+<section class="hide-show">
+
+<legend>Details for: <strong>value come from add</strong></legend>
+    <div class="">Configure here the details for selected Dynamic DNS service.</div>
+
+    <li id="">
+    <a class="basic-setting" onclick="this.blur(); return cbi_t_switch()" href="">Basic Settings</a>
+    </li>
+    <li id="">
+    <a class="advanced-settings" onclick="this.blur(); return cbi_t_switch()" href="">Advanced Settings</a>
+   </li>
+    <li id="">
+    <a class="timer-settings" onclick="this.blur(); return cbi_t_switch()" href="">Timer Settings</a>
+    </li>
+
+    <h5><b> IP address source [IPv4] </b></h5>
+   <!--need to change for datareda-->
+
+    <select name="ipv4" class="ipv4">
+        <option value="">Network</option>
+        <option value="">URL</option>
+        <option value="">interface</option>
+        <option value="">Script</option>
+    </select>
+
+    <div class="">
+        <span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+        Defines the source to read systems IPv4-Address from, that will be send to the DDNS provider
+    </div>
+
+    <li id="">
+        <a class="">Network [IPv4]</a>
+    </li>
+
+    <select name="network-ipv4" class="network-ipv4">
+        <option value="lan" >Lan</option>
+        <option value="wan" >Wan</option>
+        <option value="wan6" >Wan6</option>
+    </select>
+
+
+    <div class="">
+        <span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+        Defines the source to read systems IPv4-Address from, that will be send to the DDNS provider
+    </div>
+
+    <h5><b> Force IP Version </b></h5>
+
+    <!--need to chang-->
+    <div class="checker"><span class="checked"><input class="cbi-input-checkbox" onclick="cbi_d_update(this.id)" onchange="cbi_d_update(this.id)" id="cbid.access_control.general.enabled" name="cbid.access_control.general.enabled" value="1"  type="checkbox"></span></div>
+
+    <div class="">
+        <span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+        OPTIONAL: Force the usage of pure IPv4/IPv6 only communication.
+    </div>
+
+    <h5><b>PROXY-Server</b></h5>
+
+    <!-- need to add req value -->
+    <input type="text" name="proxy-server" required value="" placeholder="user:password@myproxy.lan:8080">
+    <div class="">
+        <span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+        <p> OPTIONAL: Proxy-Server for detection and updates.
+        <br>Format: <b>[user:password@]proxyhost:port</b>
+        <br>IPv6 address must be given in square brackets:<b>[2001:db8::1]:8080</b></p>
+    </div>
+
+    <h5><b>Log to syslog</b></h5>
+    <select name="log-to" class="log-to">
+        <option value="no-logging" >No Logging</option>
+        <option value="info" >Info</option>
+        <option value="notice" >Notice</option>
+        <option value="warning" >Warning</option>
+        <option value="Error" >Error</option>
+    </select>
+
+    <div class="">
+        <span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+        Writes log messages to syslog. Critical Errors will always be written to syslog.
+    </div>
+
+    <h5><b>Log to file</b></h5>
+    <!--need to chang-->
+    <div class="checker"><span class="checked"><input class="cbi-input-checkbox" onclick="cbi_d_update(this.id)" onchange="cbi_d_update(this.id)" id="cbid.access_control.general.enabled" name="cbid.access_control.general.enabled" value="1"  type="checkbox"></span></div>
+
+    <div class="">
+        <span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+       <p> Writes detailed messages to log file. File will be truncated automatically.<br>File: "/var/log/ddns/test1.log"</p>
+    </div>
+
+</section>
