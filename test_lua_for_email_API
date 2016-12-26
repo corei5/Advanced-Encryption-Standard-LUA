@@ -1,0 +1,148 @@
+local util=require"luci.util"
+file = io.open("/etc/config/access_control", "r")
+--local content = file:read("*line") 
+--file:close()
+
+local arr = {}
+local count = 1
+local email_settings=0
+local array_length
+
+
+
+while true do
+ local line = file:read("*line")
+ if line == nil then break end
+
+for line in file:lines() do
+ if string.find(line,"'email_settings'")  then
+  --	print("I found Email Settings. " .. count)
+  	email_settings=1
+ end
+
+ if email_settings==1 and string.find(line,"weekday") then
+	words=util.split(line," ")
+	arr['weekday']=words[3]
+ end
+
+ if email_settings==1 and string.find(line,"time_mode") then
+	words=util.split(line," ")
+	arr['time_mode']=words[3]
+ end
+
+ if email_settings==1 and string.find(line,"time") then
+    	words=util.split(line," ")
+    	arr['time']=words[3]
+     end
+
+
+ if email_settings==1 and string.find(line,"mode") then
+  	words=util.split(line," ")
+  	arr['mode']=words[3]
+ end
+
+ if email_settings==1 and string.find(line,"email_address") then
+   	words=util.split(line," ")
+   	arr['email_address']=words[3]
+  end
+
+ if email_settings==1 and string.find(line,"notification_status") then
+    	words=util.split(line," ")
+    	arr['notification_status']=words[3]
+   end
+
+ if email_settings==1 and string.find(line,"week_number") then
+     	words=util.split(line," ")
+     	arr['week_number']=words[3]
+   end
+
+ if email_settings==1 and string.find(line,"month_name") then
+      	words=util.split(line," ")
+      	arr['month_name']=words[3]
+   end
+
+
+ end
+ count = count + 1
+end
+
+
+print(arr.email_address)
+
+--local z = os.date()
+--local a = os.time()
+
+--print(os.date("%A"))
+--print(os.date("%B"))
+--print(os.date("%c"))
+--print(os.date("%H:%M:%S"))
+
+--print(z,a)
+
+local time,weekday,month,hour,periods,current_week,periods_fast,full_year,full_month,week_of_month
+
+require "socket"
+time = socket.gettime()*1000
+weekday = os.date("%A")
+month = os.date("%B")
+hour = os.date("%I")
+periods = os.date("%p")
+current_week = os.date("%V")
+--print("Milliseconds: " , time)
+full_year = os.date("%Y")
+full_month = os.date("%m")
+wk_num=os.date('%V',os.time{year=full_year,month=full_month,day=1})
+week_of_month = (current_week-wk_num)
+
+
+--print("arr.month_name: ",arr.month_name)
+--print("month: ",month)
+
+
+--print(weekday,month, hour, periods,current_week)
+
+--print(arr.time_mode)
+--print(string.lower(periods))
+
+
+if string.lower(arr.weekday) == "'"..string.lower(weekday).."'" then
+
+print("weekday:.........................  ",arr.weekday)
+
+end
+
+
+if string.lower(arr.time) == "'"..string.lower(hour).."'" then
+
+print("Hour:.........................  ",arr.time)
+
+end
+
+
+if string.lower(arr.time_mode) == "'"..string.lower(periods).."'" then
+
+print("periods:.........................  ",arr.time_mode)
+
+end
+
+
+if string.lower(arr.week_number) == "'"..string.lower(week_of_month).."'" then
+
+   print("week_of_month:.........................  ",arr.week_number)
+
+   end
+
+
+if string.lower(arr.month_name) == "'"..string.lower(month).."'" then
+
+   print("month:.........................  ",arr.month_name)
+
+   end
+
+
+
+
+file:close()
+
+
+--print(content)
