@@ -1,0 +1,398 @@
+<!--
+<%
+function is_selected(name,val)
+local ret = ""
+name = name:gsub("-","_")
+if self.data[name] == val then
+ret = " selected "
+end
+return ret
+end
+
+
+%>
+-->
+
+
+<script>
+
+
+    $(document).ready(function(){
+        var hash_id = window.location.hash.replace('#','');
+        if(hash_id.length > 0) {
+            $('.security-nav-tabs').removeClass('active')
+            $('li[data-id='+hash_id+']').addClass('active')
+            $('.security-details').addClass('hidden')
+            $('div[data-id='+hash_id+']').removeClass('hidden')
+        }
+
+        $('.advanced-settings').on('click', function(){
+           // alert(1)
+            //alert($(this).data('id'))
+            $('.tim-setting-sh').addClass('hidden')
+            $('.bas-setting-sh').addClass('hidden')
+            //$("."+$(this).data('id')).removeClass('hidden')
+            $('.adv-setting-sh').removeClass('hidden')
+            $(this).addClass('active')
+        })
+
+        $('.basic-setting').on('click', function(){
+           // alert(1)
+            //alert($(this).data('id'))
+            $('.tim-setting-sh').addClass('hidden')
+            $('.adv-setting-sh').addClass('hidden')
+            //$("."+$(this).data('id')).removeClass('hidden')
+            $('.bas-setting-sh').removeClass('hidden')
+            $(this).addClass('active')
+        })
+
+        $('.timer-settings').on('click', function(){
+           // alert(1)
+            //alert($(this).data('id'))
+            $('.adv-setting-sh').addClass('hidden')
+            $('.bas-setting-sh').addClass('hidden')
+            //$("."+$(this).data('id')).removeClass('hidden')
+            $('.tim-setting-sh').removeClass('hidden')
+            $(this).addClass('active')
+        })
+
+
+        $('.but-cls').click(function() {
+           // alert($(this).attr('value'));
+           // $('.cbi-section').addClass('hidden')
+            $('.hints').addClass('hidden')
+            $('.Overview-sh').addClass('hidden')
+            $('.hide-show').removeClass('hidden')
+            $(this).addClass('active')
+            value = $(".show-detail").val();
+           // alert(value)
+            $(".value-text1").html(value);
+        });
+
+    })
+
+
+
+</script>
+
+
+
+<section class="content-header page-title" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
+         xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+    <h1>Dynamic DNS</h1>
+</section>
+
+<div class="cbi-map-descr">Dynamic DNS allows that your router can be reached with a fixed hostname while having a dynamically changing IP address.<br>OpenWrt Wiki: <a href="http://wiki.openwrt.org/doc/howto/ddns.client" target="_blank">DDNS Client Documentation</a> --- <a href="http://wiki.openwrt.org/doc/uci/ddns" target="_blank">DDNS Client Configuration</a></div>
+
+
+<div class="hints">
+
+<fieldset class="cbi-section">
+    <legend>Hints</legend>
+
+    <div class="cbi-section-node">
+        <div id="cbi-ddns-0x974ee0">
+            <div class="cbi-value cbi-value-last" id="cbi-ddns-1-_separate" data-index="1" data-depends="[]"><label class="cbi-value-title" for="cbid.ddns.1._separate"><a title="Go to relevant configuration page" class="cbi-title-ref" href="/cgi-bin/luci/admin/services/ddns/hints"><strong>Show more</strong></a></label>
+                <div class="cbi-value-field">
+
+                    Follow this link<br>You will find more hints to optimize your system to run DDNS scripts with all options
+                    <input id="cbid.ddns.1._separate" value="Follow this link<br />You will find more hints to optimize your system to run DDNS scripts with all options" type="hidden">
+                </div></div>
+
+
+        </div>
+
+    </div>
+    <br>
+</fieldset>
+
+</div>
+
+<div class="Overview-sh">
+
+<legend>Overview</legend>
+
+<div class="disc">Below is a list of configured DDNS configurations and their current state.
+    <br>If you want to send updates for IPv4 and IPv6 you need to define two separate Configurations i.e. 'myddns_ipv4' and 'myddns_ipv6'<br>
+    <a href="http://192.168.11.150/cgi-bin/luci/;stok=7e05d204b3fe205fd9caa731e0496e47/admin/dynamic_dns_rabby">To change global settings click here</a>
+</div>
+
+<table id="rule-table">
+    <tr>
+        <th>Configuration</th>
+        <th>Lookup Hostname Registered IP</th>
+        <th>Enabled</th>
+        <th>Last Update Next Update	Process ID Start / Stop	</th>
+    </tr>
+</table>
+
+
+
+ <input class ="show-detail" input type="text" name="description1" value=" ">
+ <input class="but-cls" input type="button" onclick=" " value="Add" >
+
+</div>
+
+ <section class="hide-show hidden">
+
+  <legend>Details for: <strong><span class='value-text1'></span></strong></legend>
+    <div class="">Configure here the details for selected Dynamic DNS service.</div>
+
+    <li id="">
+    <a class="basic-setting" onclick="this.blur(); return cbi_t_switch()" href="">Basic Settings</a>
+    </li>
+    <li id="">
+    <a class="advanced-settings" onclick="this.blur(); return cbi_t_switch()" href="">Advanced Settings</a>
+   </li>
+    <li id="">
+    <a class="timer-settings" onclick="this.blur(); return cbi_t_switch()" href="">Timer Settings</a>
+    </li>
+
+ </section>
+
+ <section class="adv-setting-sh hidden">
+
+    <h5><b> IP address source [IPv4] </b></h5>
+   <!--need to change for datareda-->
+
+    <select class="ipv4" name="ipv4_add_sou">
+        <option value="network">Network</option>
+        <option value="url">URL</option>
+        <option value="interface">interface</option>
+        <option value="script">Script</option>
+    </select>
+
+    <div class="">
+        <span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+        Defines the source to read systems IPv4-Address from, that will be send to the DDNS provider
+    </div>
+
+    <li id="">
+        <a class="">Network [IPv4]</a>
+    </li>
+
+    <select class="network-ipv4"  name="network_ipv4">
+        <option value="lan" >Lan</option>
+        <option value="wan" >Wan</option>
+        <option value="wan6" >Wan6</option>
+    </select>
+
+
+    <div class="">
+        <span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+        Defines the source to read systems IPv4-Address from, that will be send to the DDNS provider
+    </div>
+
+    <h5><b> Force IP Version </b></h5>
+
+    <!--need to chang-->
+    <div class="checker"><span class="checked"><input class="cbi-input-checkbox" onclick="cbi_d_update(this.id)" onchange="cbi_d_update(this.id)" id="cbid.access_control.general.enabled" name="foc_ip_enabled" value="1"  type="checkbox"></span></div>
+
+    <div class="">
+        <span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+        OPTIONAL: Force the usage of pure IPv4/IPv6 only communication.
+    </div>
+
+    <h5><b>PROXY-Server</b></h5>
+
+    <!-- need to add req value -->
+    <input type="text" name="proxy_server" placeholder="user:password@myproxy.lan:8080">
+    <div class="">
+        <span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+        <p> OPTIONAL: Proxy-Server for detection and updates.
+        <br>Format: <b>[user:password@]proxyhost:port</b>
+        <br>IPv6 address must be given in square brackets:<b>[2001:db8::1]:8080</b></p>
+    </div>
+
+    <h5><b>Log to syslog</b></h5>
+    <select class="log-to" name="log_to">
+        <option value="no-logging" >No Logging</option>
+        <option value="info" >Info</option>
+        <option value="notice" >Notice</option>
+        <option value="warning" >Warning</option>
+        <option value="Error" >Error</option>
+    </select>
+
+    <div class="">
+        <span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+        Writes log messages to syslog. Critical Errors will always be written to syslog.
+    </div>
+
+    <h5><b>Log to file</b></h5>
+    <!--need to chang-->
+    <div class="checker"><span class="checked"><input class="cbi-input-checkbox" onclick="cbi_d_update(this.id)" onchange="cbi_d_update(this.id)" id="cbid.access_control.general.enabled" name="log_to_file" value="1"  type="checkbox"></span></div>
+
+    <div class="">
+        <span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+       <p> Writes detailed messages to log file. File will be truncated automatically.<br>File: "/var/log/ddns/test1.log"</p>
+    </div>
+
+ </section>
+
+ <section class="bas-setting-sh hidden">
+
+<h5><b>Enabled</b></h5>
+
+<!--need to chang-->
+<div class="checker"><span class="checked"><input class="cbi-input-checkbox" onclick="cbi_d_update(this.id)" onchange="cbi_d_update(this.id)" id="cbid.access_control.general.enabled" name="access_control_enabled"   type="checkbox"></span></div>
+    <div class="">
+    <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+    If this service section is disabled it could not be started.</br>
+    Neither from LuCI interface nor from console</p>
+</div>
+
+<h5><b>Lookup Hostname</b></h5>
+    <input type="text" name="lookup_hostname" value="Lookup Hostname">
+
+    <div class="">
+    <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+        Hostname/FQDN to validate, if IP update happen or necessary </p>
+    </div>
+
+    <h5><b>IP address version</b></h5>
+    <div class="">
+    <label id="">
+        <div class="radio"><span class="checked"><input class="cbi-input-radio" data-update="click change" name="ipv_add" value="4" checked="checked" type="radio"></span></div>IPv4-Address</label>
+    </div>
+
+    <div class="">
+    <label id="">
+        <div class="radio"><span class="checked"><input class="cbi-input-radio" data-update="click change" name="ipv_add" value="6" checked="checked" type="radio"></span></div>IPv6-Address</label>
+    </div>
+
+    <div class="">
+        <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+            Defines which IP address 'IPv4/IPv6' is send to the DDNS provider  </p>
+    </div>
+
+    <h5><b>DDNS Service provider [IPv4]</b></h5>
+
+    <select class="ddns-service" name="ddns_service_read">
+    <option value="facebook.com">Facebook.com</option>
+        <option value="nubem.com">nubem.com</option>
+        <option value="oray.com">oray.com</option>
+        <option value="ovh.com">Ovh.com</option>
+        <option value="zzz.com">zzz.com</option>
+        <option value="crickinfo.com">cricinfo.com</option>
+    </select>
+
+    <h5><b>Custom update-URL</b></h5>
+    <input type="text" name="custom_update_url"  value="Lookup Hostname">
+   <div class="">
+    <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+        Update URL to be used for updating your DDNS Provider.</br>Follow instructions you will find on their WEB page.   </p>
+   </div>
+
+    <h5><b>Custom update-script</b></h5>
+    <input type="text" name="custom_update_script"  value=" ">
+    <div class="">
+        <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+            Custom update script to be used for updating your DDNS Provider.   </p>
+    </div>
+
+    <h5><b>Domain</b></h5>
+    <input type="text" name="domain"  value=" ">
+    <div class="">
+        <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+            Replaces [DOMAIN] in Update-URL </p>
+    </div>
+
+    <h5><b>Username</b></h5>
+    <input type="text" name="username"  value=" ">
+    <div class="">
+        <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+            Replaces [USERNAME] in Update-URL (URL-encoded)  </p>
+    </div>
+
+    <h5><b>Password</b></h5>
+    <input type="text" name="password"  value=" ">
+    <img src="/luci-static/resources/cbi/reload.gif" style="vertical-align:middle" title="Reveal/hide password" onclick="var e = document.getElementById('cbid.ddns.test1.password'); e.type = (e.type=='password') ? 'text' : 'password';">
+
+    <div class="">
+        <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+            Replaces [PASSWORD] in Update-URL (URL-encoded) </p>
+    </div>
+
+    <h5><b>Optional Encoded Parameter</b></h5>
+    <input type="text" name="encoded_parameter" value=" ">
+    <div class="">
+        <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+            Optional: Replaces [PARAMENC] in Update-URL (URL-encoded) </p>
+    </div>
+
+    <h5><b>Optional Parameter</b></h5>
+    <input type="text" name="optional_parameter"  value=" ">
+    <div class="">
+        <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+            Optional: Replaces [PARAMOPT] in Update-URL (NOT URL-encoded)  </p>
+    </div>
+
+    <h5><b>Use HTTP Secure</b></h5>
+    <!--need to chang-->
+    <div class="checker"><span class="checked"><input class="cbi-input-checkbox" onclick="cbi_d_update(this.id)" onchange="cbi_d_update(this.id)" id="cbid.access_control.general.enabled" name="http_secure" value="1"  type="checkbox"></span></div>
+    <div class="">
+        <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+            Enable secure communication with DDNS provider </p>
+    </div>
+
+</section>
+
+ <section class="tim-setting-sh hidden">
+
+     <div class="check-interval">
+     <h5><b>Check Interval</b></h5>
+         <input type="text" name="check_interval" value=" ">
+
+         <select class="" name="chk_int_time">
+         <option value="second">Seconds</option>
+         <option value="minit">Minutes</option>
+         <option value="hours">Hours</option>
+         </select>
+
+         <div class="">
+             <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+                 Interval to check for changed IP</br>Values below 5 minutes == 300 seconds are not supported  </p>
+         </div>
+     </div>
+
+     <div class="force-interval">
+         <h5><b>Force Interval</b></h5>
+         <input type="text" name="force_interval" value=" ">
+
+         <select class="" name="force_interval_time">
+             <option value="second">Days</option>
+             <option value="minit">Minutes</option>
+             <option value="hours">Hours</option>
+         </select>
+
+         <div class="">
+             <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+                 Interval to force updates send to DDNS Provider</br>Setting this parameter to 0 will force the script to only run once</br>Values lower 'Check Interval' except '0' are not supported  </p>
+         </div>
+     </div>
+
+     <h5><b>Error Retry Counter</b></h5>
+     <input type="text" name="error_retry_counter" value=" ">
+     <div class="">
+         <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+             On Error the script will stop execution after given number of retrys</br>The default setting of '0' will retry infinite. </p>
+     </div>
+
+     <div class="error-retry-interval">
+         <h5><b>Error Retry Interval</b></h5>
+         <input type="text" name="error_retry_interval" value=" ">
+
+         <select class="" name="error_retry_interval_time">
+             <option value="second">Days</option>
+             <option value="minit">Minutes</option>
+         </select>
+
+         <div class="">
+             <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+                 On Error the script will retry the failed action after given time</p>
+         </div>
+     </div>
+
+  </section>
+
+
