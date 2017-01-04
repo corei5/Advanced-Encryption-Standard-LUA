@@ -1,5 +1,13 @@
-<!--
 <%
+function is_checked(variable,value)
+local ret = ""
+if tostring(variable)==tostring(value) then
+ret = 'checked="checked"'
+end
+return ret
+end
+
+
 function is_selected(name,val)
 local ret = ""
 name = name:gsub("-","_")
@@ -9,13 +17,147 @@ end
 return ret
 end
 
-
 %>
--->
 
-<section class="content-header page-title" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+
+<script xmlns="">
+
+
+    $(document).ready(function() {	
+        var hash_id = window.location.hash.replace('#','');
+        if(hash_id.length > 0) {
+            $('.security-nav-tabs').removeClass('active')
+            $('li[data-id='+hash_id+']').addClass('active')
+            $('.security-details').addClass('hidden')
+            $('div[data-id='+hash_id+']').removeClass('hidden')
+        }
+
+        $('.advanced-settings').on('click', function(){
+           // alert(1)
+            //alert($(this).data('id'))
+            $('.tim-setting-sh').addClass('hidden')
+            $('.bas-setting-sh').addClass('hidden')
+            //$("."+$(this).data('id')).removeClass('hidden')
+            $('.adv-setting-sh').removeClass('hidden')
+            $(this).addClass('active')
+        })
+
+        $('.basic-setting').on('click', function(){
+           // alert(1)
+            //alert($(this).data('id'))
+            $('.tim-setting-sh').addClass('hidden')
+            $('.adv-setting-sh').addClass('hidden')
+            //$("."+$(this).data('id')).removeClass('hidden')
+            $('.bas-setting-sh').removeClass('hidden')
+            $(this).addClass('active')
+        })
+
+        $('.timer-settings').on('click', function(){
+           // alert(1)
+            //alert($(this).data('id'))
+            $('.adv-setting-sh').addClass('hidden')
+            $('.bas-setting-sh').addClass('hidden')
+            //$("."+$(this).data('id')).removeClass('hidden')
+            $('.tim-setting-sh').removeClass('hidden')
+            $(this).addClass('active')
+        })
+
+
+        $('.but-cls').click(function() {
+           // alert($(this).attr('value'));
+           // $('.cbi-section').addClass('hidden')
+            $('.hints').addClass('hidden')
+            $('.Overview-sh').addClass('hidden')
+            $('.hide-show').removeClass('hidden')
+            $('.bas-setting-sh').removeClass('hidden')
+            $(this).addClass('active')
+            value = $(".show-detail").val();
+           // alert(value)
+            $(".value_text1").html(value);
+        });
+
+
+        $('.use_http_sec').click(function() {
+	  if( $('.cbi-input-checkbox:checked').length==3 ){
+		$('.http_secure_class').removeClass('hidden')
+	  } else {
+		$('.http_secure_class').addClass('hidden')
+	}
+            
+        });
+	
+	if( $('.cbi-input-checkbox:checked').length==3 ){
+		$('.http_secure_class').removeClass('hidden')
+	  } else {
+		$('.http_secure_class').addClass('hidden')
+	}
+
+	
+
+
+        $('.cbi-button-edit').click(function() {
+             //alert($(this).attr('html_value'));
+            $('.hints').addClass('hidden')
+            $('.Overview-sh').addClass('hidden')
+            $('.hide-show').removeClass('hidden')
+            $('.bas-setting-sh').removeClass('hidden')
+            $(this).addClass('active')
+            value = $(".show-detail").val();
+            $(".value_text1").html(value);
+           // var html_value=$(".value_text1").html(value);
+            //var s=1 ;
+           //alert(s)
+        });
+
+
+	$('.ddns_password_toggle').on('click', function(){
+		if ($('.ddns_password').attr('type')=="password")
+			$('.ddns_password').prop({type:"text"});
+		else
+			$('.ddns_password').prop({type:"password"});
+		end		
+	})
+
+    })
+
+
+
+</script>
+
+
+
+<section class="content-header page-title" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
+         xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
     <h1>Dynamic DNS</h1>
 </section>
+
+<div class="cbi-map-descr">Dynamic DNS allows that your router can be reached with a fixed hostname while having a dynamically changing IP address.<br>OpenWrt Wiki: <a href="http://wiki.openwrt.org/doc/howto/ddns.client" target="_blank">DDNS Client Documentation</a> --- <a href="http://wiki.openwrt.org/doc/uci/ddns" target="_blank">DDNS Client Configuration</a></div>
+
+
+<div class="hints">
+
+<fieldset class="cbi-section">
+    <legend>Hints</legend>
+
+    <div class="cbi-section-node">
+        <div id="cbi-ddns-0x974ee0">
+            <div class="cbi-value cbi-value-last" id="cbi-ddns-1-_separate" data-index="1" data-depends="[]"><label class="cbi-value-title" for="cbid.ddns.1._separate"><a title="Go to relevant configuration page" class="cbi-title-ref" href="https://wiki.openwrt.org/doc/howto/ddns.client"><strong>Show more</strong></a></label>
+                <div class="cbi-value-field">
+
+                    Follow this link<br>You will find more hints to optimize your system to run DDNS scripts with all options
+                    <input id="cbid.ddns.1._separate" value="Follow this link<br />You will find more hints to optimize your system to run DDNS scripts with all options" type="hidden">
+                </div></div>
+
+
+        </div>
+
+    </div>
+    <br>
+</fieldset>
+
+</div>
+
+<div class="Overview-sh">
 
 <legend>Overview</legend>
 
@@ -24,24 +166,50 @@ end
     <a href="http://192.168.11.150/cgi-bin/luci/;stok=7e05d204b3fe205fd9caa731e0496e47/admin/dynamic_dns_rabby">To change global settings click here</a>
 </div>
 
-<table id="rule-table">
+<table id="rule-table" width="80%">
+    <fieldset>
     <tr>
         <th>Configuration</th>
-        <th>Lookup Hostname Registered IP</th>
+        <th>Lookup Hostname </br>Registered IP</th>
         <th>Enabled</th>
-        <th>Last Update Next Update	Process ID Start / Stop	</th>
+        <th>Last Update</br> Next Update</th>
+        <th>Process ID </br>  Start / Stop	</th>
     </tr>
+    </fieldset>
+
+    <fieldset>
+
+	<% for i=1,table.getn(self.data.send_ddns_table) do %>
+
+
+
+
+	<tr>
+
+        <td><h5><%=self.data.send_ddns_table[i]['.name']%></h5></td>
+        <td><h5><%=self.data.send_ddns_table[i].lookup_host%></h5></td>
+        <td><input class="cbi-input-checkbox" onclick="cbi_d_update(this.id)" onchange="onchange_enabled(this.id)" id="cbid.ddns.myddns_ipv6.enabled" name="cbi_input_checkbox" value="on" <%=is_checked(self.data.send_ddns_table[i].cbi_input_checkbox,"on")%> type="checkbox"></td>
+
+        <td><input class="cbi-button-edit" value="Edit"  alt="Edit" title="Edit" type="button"></td>
+        <td><input class="cbi-button-remove" value="Delete" onclick="this.form.cbi_state='del-section'; return true" name="button_remove" alt="Delete" title="Delete" type="submit"></td>
+
+    </tr>
+
+	<% end %>
+    
+    </fieldset>
 </table>
 
 
 
-<input type="text" name="description1" required1="" value="go to Dynamic DNS">
-<input type="button" onclick="location.href='http://facebook.com';" value="Add" />
+ <input class ="show-detail" input type="text" name="description1" value=" ">
+ <input class="but-cls" input type="button" onclick=" " value="Add" >
 
+</div>
 
-<section class="hide-show">
+ <section class="hide-show hidden">
 
-<legend>Details for: <strong>value come from add</strong></legend>
+  <legend>Details for: <strong><span class='value_text1'></span></strong></legend>
     <div class="">Configure here the details for selected Dynamic DNS service.</div>
 
     <li id="">
@@ -54,14 +222,18 @@ end
     <a class="timer-settings" onclick="this.blur(); return cbi_t_switch()" href="">Timer Settings</a>
     </li>
 
+ </section>
+
+ <section class="adv-setting-sh hidden">
+
     <h5><b> IP address source [IPv4] </b></h5>
    <!--need to change for datareda-->
 
-    <select name="ipv4" class="ipv4">
-        <option value="">Network</option>
-        <option value="">URL</option>
-        <option value="">interface</option>
-        <option value="">Script</option>
+    <select class="ipv4" name="ipv4_add_sou">
+        <option value="network">Network</option>
+        <option class="url" value="url">URL</option>
+        <option value="interface">interface</option>
+        <option value="script">Script</option>
     </select>
 
     <div class="">
@@ -73,7 +245,7 @@ end
         <a class="">Network [IPv4]</a>
     </li>
 
-    <select name="network-ipv4" class="network-ipv4">
+    <select class="network-ipv4"  name="network_ipv4">
         <option value="lan" >Lan</option>
         <option value="wan" >Wan</option>
         <option value="wan6" >Wan6</option>
@@ -88,7 +260,7 @@ end
     <h5><b> Force IP Version </b></h5>
 
     <!--need to chang-->
-    <div class="checker"><span class="checked"><input class="cbi-input-checkbox" onclick="cbi_d_update(this.id)" onchange="cbi_d_update(this.id)" id="cbid.access_control.general.enabled" name="cbid.access_control.general.enabled" value="1"  type="checkbox"></span></div>
+    <div class="checker"><span class="checked"><input class="cbi-input-checkbox" onclick="cbi_d_update(this.id)" onchange="cbi_d_update(this.id)" id="cbid.access_control.general.enabled" name="foc_ip_enabled" value="on" <%=is_checked(self.data.send_foc_ip_enabled,"on")%>  type="checkbox"></span></div>
 
     <div class="">
         <span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
@@ -98,7 +270,7 @@ end
     <h5><b>PROXY-Server</b></h5>
 
     <!-- need to add req value -->
-    <input type="text" name="proxy-server" required value="" placeholder="user:password@myproxy.lan:8080">
+    <input type="text" name="proxy_server" placeholder="user:password@myproxy.lan:8080" value="<%=self.data.send_proxy_server%>">
     <div class="">
         <span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
         <p> OPTIONAL: Proxy-Server for detection and updates.
@@ -107,7 +279,7 @@ end
     </div>
 
     <h5><b>Log to syslog</b></h5>
-    <select name="log-to" class="log-to">
+    <select class="log-to" name="log_to">
         <option value="no-logging" >No Logging</option>
         <option value="info" >Info</option>
         <option value="notice" >Notice</option>
@@ -122,11 +294,188 @@ end
 
     <h5><b>Log to file</b></h5>
     <!--need to chang-->
-    <div class="checker"><span class="checked"><input class="cbi-input-checkbox" onclick="cbi_d_update(this.id)" onchange="cbi_d_update(this.id)" id="cbid.access_control.general.enabled" name="cbid.access_control.general.enabled" value="1"  type="checkbox"></span></div>
+    <div class="checker"><span class="checked"><input class="cbi-input-checkbox" onclick="cbi_d_update(this.id)" onchange="cbi_d_update(this.id)" id="cbid.access_control.general.enabled" name="log_to_file" value="on" <%=is_checked(self.data.send_log_to_file,"on")%>  type="checkbox"></span></div>
 
     <div class="">
         <span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
        <p> Writes detailed messages to log file. File will be truncated automatically.<br>File: "/var/log/ddns/test1.log"</p>
     </div>
 
+ </section>
+
+ <section class="bas-setting-sh hidden">
+
+        <h5><b>Enabled</b></h5>
+
+<!--need to chang-->
+<div class="checker"><span\class="checked">
+<input class="cbi-input-checkbox" onclick="cbi_d_update(this.id)" onchange="cbi_d_update(this.id)" id="cbid.access_control.general.enabled" name="access_control_enabled"  value="on" <%=is_checked(self.data.send_access_control_enabled,"on")%> type="checkbox"></span></div>
+
+     <div class="">
+    <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+    If this service section is disabled it could not be started.</br>
+    Neither from LuCI interface nor from console</p>
+</div>
+
+<h5><b>Lookup Hostname</b></h5>
+    <input type="text" name="lookup_hostname" required value="<%=self.data.send_ddns_ipv_lookup_hostname%>" >
+
+    <div class="">
+    <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+        Hostname/FQDN to validate, if IP update happen or necessary </p>
+    </div>
+
+    <h5><b>IP address version</b></h5>
+    <div class="">
+    <label id="">
+        <div class="radio"><span class="checked"><input class="cbi-input-radio" data-update="click change" name="ipv_add" value="4" <%=is_checked(self.data.send_ddns_ipv,4)%> type="radio"></span></div>IPv4-Address</label>
+    </div>
+
+    <div class="">
+    <label id="">
+        <div class="radio"><span class="checked"><input class="cbi-input-radio" data-update="click change" name="ipv_add" value="6" <%=is_checked(self.data.send_ddns_ipv,6)%> type="radio"></span></div>IPv6-Address</label>
+    </div>
+
+    <div class="">
+        <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+            Defines which IP address 'IPv4/IPv6' is send to the DDNS provider  </p>
+    </div>
+
+    <h5><b>DDNS Service provider [IPv4]</b></h5>
+
+    <select class="ddns_service" name="ddns_service">
+    <option value="facebook.com"<%=is_selected("send_set_ddns_ipv_service_read","facebook.com")%>>Facebook.com</option>
+        <option value="nubem.com"<%=is_selected("send_set_ddns_ipv_service_read","nubem.com")%>>nubem.com</option>
+        <option value="oray.com"<%=is_selected("send_set_ddns_ipv_service_read","oray.com")%>>oray.com</option>
+        <option value="ovh.com"<%=is_selected("send_set_ddns_ipv_service_read","ovh.com")%>>Ovh.com</option>
+        <option value="zzz.com"<%=is_selected("send_set_ddns_ipv_service_read","zzz.com")%>>zzz.com</option>
+        <option value="crickinfo.com"<%=is_selected("send_set_ddns_ipv_service_read","cricinfo.com")%>>cricinfo.com</option>
+    </select>
+
+    <h5><b>Custom update-URL</b></h5>
+    <input type="text" name="custom_update_url" value="<%=self.data.send_custom_update_url%>" >
+   <div class="">
+    <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+        Update URL to be used for updating your DDNS Provider.</br>Follow instructions you will find on their WEB page.   </p>
+   </div>
+
+    <h5><b>Custom update-script</b></h5>
+    <input type="text" name="custom_update_script"  value="<%=self.data.send_custom_update_script%>">
+    <div class="">
+        <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+            Custom update script to be used for updating your DDNS Provider.   </p>
+    </div>
+
+    <h5><b>Domain</b></h5>
+    <input type="text" name="domain"  required value="<%=self.data.send_ddns_ipv_domain%>" >
+    <div class="">
+        <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+            Replaces [DOMAIN] in Update-URL </p>
+    </div>
+
+    <h5><b>Username</b></h5>
+    <input type="text" name="username"  required value="<%=self.data.send_ddns_ipv_username%>">
+    <div class="">
+        <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+            Replaces [USERNAME] in Update-URL (URL-encoded)  </p>
+    </div>
+
+    <h5><b>Password</b></h5>
+    <input class="ddns_password" type="password" name="password" required value="<%=self.data.send_ddns_ipv_password%>">
+    <img class="ddns_password_toggle" src="/luci-static/resources/cbi/reload.gif" style="vertical-align:middle" title="Reveal/hide password" onclick="var e = document.getElementById('cbid.ddns.test1.password'); e.type = (e.type=='password') ? 'text' : 'password';">
+
+    <div class="">
+        <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+            Replaces [PASSWORD] in Update-URL (URL-encoded) </p>
+    </div>
+
+    <h5><b>Optional Encoded Parameter</b></h5>
+    <input type="text" name="encoded_parameter" value="<%=self.data.send_encoded_parameter%>">
+    <div class="">
+        <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+            Optional: Replaces [PARAMENC] in Update-URL (URL-encoded) </p>
+    </div>
+
+    <h5><b>Optional Parameter</b></h5>
+    <input type="text" name="optional_parameter"  value="<%=self.data.send_encoded_parameter%>">
+    <div class="">
+        <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+            Optional: Replaces [PARAMOPT] in Update-URL (NOT URL-encoded)  </p>
+    </div>
+
+    <h5><b>Use HTTP Secure</b></h5>
+    <!--need to chang-->
+    <div class="use_http_sec"><span class="checked"><input class="cbi-input-checkbox" onclick="myFunction();" onchange="cbi_d_update(this.id)" id="cbid.access_control.general.enabled" name="use_http_secure" value="on" <%=is_checked(self.data.send_use_http_secure,"on")%>  type="checkbox"></span></div>
+
+     <div class="">
+     <input class="http_secure_class hidden" type="text" name="http_secure_textbox"  value="<%=self.data.send_ddns_ipv_http_secure_textbox%>">
+     </div>
+
+
+     <div class="">
+        <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+            Enable secure communication with DDNS provider </p>
+    </div>
+
 </section>
+
+ <section class="tim-setting-sh hidden">
+
+     <div class="check-interval">
+     <h5><b>Check Interval</b></h5>
+         <input type="text" name="check_interval" value="<%=self.data.send_check_interval%>">
+
+         <select class="chk_int_time" name="chk_int_time">
+         <option value="second"<%=is_selected("send_chk_int_time","second")%>>Seconds</option>
+         <option value="minit"<%=is_selected("send_chk_int_time","minit")%>>Minutes</option>
+         <option value="hours"<%=is_selected("send_chk_int_time","hours")%>>Hours</option>
+         </select>
+
+         <div class="">
+             <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+                 Interval to check for changed IP</br>Values below 5 minutes == 300 seconds are not supported  </p>
+         </div>
+     </div>
+
+     <div class="force-interval">
+         <h5><b>Force Interval</b></h5>
+         <input type="text" name="force_interval" value="<%=self.data.send_force_interval%>">
+
+         <select class="force_interval_time" name="force_interval_time">
+             <option value="second"<%=is_selected("send_force_interval_time","second")%>>Days</option>
+             <option value="minit"<%=is_selected("send_force_interval_time","minit")%>>Minutes</option>
+             <option value="hours"<%=is_selected("send_force_interval_time","hours")%>>Hours</option>
+         </select>
+
+         <div class="">
+             <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+                 Interval to force updates send to DDNS Provider</br>Setting this parameter to 0 will force the script to only run once</br>Values lower 'Check Interval' except '0' are not supported  </p>
+         </div>
+     </div>
+
+     <h5><b>Error Retry Counter</b></h5>
+     <input type="text" name="error_retry_counter" value="<%=self.data.send_error_retry_counter%>">
+     <div class="">
+         <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+             On Error the script will stop execution after given number of retrys</br>The default setting of '0' will retry infinite. </p>
+     </div>
+
+     <div class="error-retry-interval">
+         <h5><b>Error Retry Interval</b></h5>
+         <input type="text" name="error_retry_interval" value="<%=self.data.send_error_retry_interval%>">
+
+
+         <select class="error_retry_interval_time" name="error_retry_interval_time">
+             <option value="hours"<%=is_selected("send_error_retry_interval_time","days")%>>Hours</option>
+             <option value="minute"<%=is_selected("send_error_retry_interval_time","minute")%>>Minutes</option>
+         </select>
+
+         <div class="">
+             <p><span class=""><img src="/luci-static/resources/cbi/help.gif" alt="help"></span>
+                 On Error the script will retry the failed action after given time</p>
+         </div>
+     </div>
+
+  </section>
+
+
