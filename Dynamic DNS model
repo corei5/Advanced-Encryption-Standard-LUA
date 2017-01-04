@@ -1,0 +1,237 @@
+require("uci")
+x = uci.cursor()
+
+m = Map("access_control" , "") -- We want to edit the uci config file /etc/config/network
+s = m:section(NamedSection, "general","","","") -- Especially the "interface"-sections
+
+list = s:option(Value, "anonymouse", "") -- or whatever creating a Value
+list.template = "dynamic_dns_rabby/dynamic_dns"
+submit = luci.http.formvalue("cbi.apply") or ""
+
+local get_ddns_ipv4_service_read,set_ipv_add6,set_ipv_add4,get_ddns_ipv6_domain,set_ddns_ipv4_service_read,set_ddns_ipv4_lookup_hostname,set_ddns_ipv4_domain,set_ddns_ipv4_username,set_ddns_ipv4_password,set_ddns_ipv4_network_ipv4,set_ddns_ipv4_ipv4_add_sou,set_ddns_ipv6_lookup_hostname,set_ddns_ipv6_domain,set_ddns_ipv6_username,set_ddns_ipv6_password,set_ddns_ipv6_1,set_ddns_ipv6_network_ipv4,set_ddns_ipv6_ipv4_add_sou,get_ddns_ipv4_service_read,get_ddns_ipv4_lookup_hostname,get_ddns_ipv4_domain,get_ddns_ipv4_username,get_ddns_ipv4_password,get_ddns_ipv4_network_ipv4,get_ddns_ipv4_ipv4_add_sou,get_ddns_ipv6_lookup_hostname,get_ddns_ipv6_domain,get_ddns_ipv6_username,get_ddns_ipv6_password,get_ddns_ipv6_1,get_ddns_ipv6_network_ipv4,get_ddns_ipv6_ipv4_add_sou,send_ddns_ipv_lookup_hostname,send_ddns_ipv_domain,send_ddns_ipv_username,send_ddns_ipv_password,send_ddns_ipv_http_secure_textbox,get_custom_update_url_ipv6,get_custom_update_url_ipv4,set_custom_update_url_ipv4, set_custom_update_url_ipv6, send_custom_update_url,set_custom_update_script,get_custom_update_script_ipv4,get_custom_update_script_ipv6,send_custom_update_script ,set_encoded_parameter,get_encoded_parameter_ipv4,get_encoded_parameter_ipv6,send_encoded_parameter,set_optional_parameter,get_optional_parameter_ipv4,get_optional_parameter_ipv6,send_optional_parameter ,set_proxy_server,get_proxy_server_ipv4,get_proxy_server_ipv6,send_proxy_server,set_check_interval,get_check_interval_ipv4,get_check_interval_ipv6,send_check_interval ,set_force_interval,get_force_interval_ipv4,get_force_interval_ipv6,send_force_interval,set_error_retry_counter,get_error_retry_counter_ipv4,get_error_retry_counter_ipv6 ,send_error_retry_counter,set_error_retry_interval,get_error_retry_interval_ipv4,get_error_retry_interval_ipv6,send_error_retry_interval,set_access_control_enabled,get_access_control_enabled_ipv4,get_access_control_enabled_ipv6 ,send_access_control_enabled,send_set_ddns_ipv_service_read,set_foc_ip_enabled,get_foc_ip_enabled_ipv4,get_foc_ip_enabled_ipv6,send_foc_ip_enabled,set_log_to_file,get_log_to_file_ipv4,get_log_to_file_ipv6,send_log_to_file,set_use_http_secure,get_use_http_secure_ipv4,get_use_http_secure_ipv6 ,send_use_http_secure,set_chk_int_time,get_chk_int_time_ipv4,get_chk_int_time_ipv6,send_chk_int_time,set_force_interval_time,get_force_interval_time_ipv4,get_force_interval_time_ipv6 ,send_error_retry_interval_time,set_cbi_input_checkbox,get_cbi_input_checkbox_ipv4,get_cbi_input_checkbox_ipv6,send_cbi_input_checkbox
+
+if submit ~= "" then
+
+description1= luci.http.formvalue("description1") or ""
+
+lookup_hostname = luci.http.formvalue("lookup_hostname") or ""
+ipv_add = luci.http.formvalue("ipv_add") or ""
+access_control_enabled = luci.http.formvalue("access_control_enabled") or ""
+ddns_service = luci.http.formvalue("ddns_service") or ""
+custom_update_url = luci.http.formvalue("custom_update_url") or ""
+custom_update_script = luci.http.formvalue("custom_update_script") or ""
+domain = luci.http.formvalue("domain") or ""
+username = luci.http.formvalue("username") or ""
+password = luci.http.formvalue("password") or ""
+encoded_parameter = luci.http.formvalue("encoded_parameter") or ""
+optional_parameter = luci.http.formvalue("optional_parameter") or ""
+use_http_secure= luci.http.formvalue("use_http_secure") or ""
+
+ipv4_add_sou = luci.http.formvalue("ipv4_add_sou") or ""
+network_ipv4 = luci.http.formvalue("network_ipv4") or ""
+foc_ip_enabled = luci.http.formvalue("foc_ip_enabled")or ""
+proxy_server = luci.http.formvalue("proxy_server") or ""
+log_to = luci.http.formvalue("log_to") or ""
+log_to_file = luci.http.formvalue("log_to_file") or ""
+
+check_interval = luci.http.formvalue("check_interval") or ""
+chk_int_time = luci.http.formvalue("chk_int_time") or ""
+force_interval = luci.http.formvalue("force_interval") or ""
+force_interval_time = luci.http.formvalue("force_interval_time") or ""
+error_retry_counter = luci.http.formvalue("error_retry_counter") or ""
+error_retry_interval = luci.http.formvalue("error_retry_interval") or ""
+error_retry_interval_time = luci.http.formvalue("error_retry_interval_time") or ""
+http_secure_textbox = luci.http.formvalue("http_secure_textbox") or ""
+cbi_input_checkbox=luci.http.formvalue("cbi_input_checkbox") or ""
+
+--print("")
+--print("http_secure_textbox  : ",http_secure_textbox)
+--os.exit(1)
+
+if ipv_add == '4' then
+
+   x:set("network1", "myddns_ipv4", "service")
+   x:save("network1")
+   x:commit("network1")
+
+
+
+   set_ddns_ipv_service_read =  x:set("network1", "myddns_ipv4", "service_name",ddns_service)
+   set_ddns_ipv4_lookup_hostname =  x:set("network1","myddns_ipv4","lookup_host",lookup_hostname)
+   set_ddns_ipv4_domain =  x:set("network1","myddns_ipv4","domain",domain)
+   set_ddns_ipv4_username =  x:set("network1","myddns_ipv4","username",username)
+   set_ddns_ipv4_password =  x:set("network1","myddns_ipv4","password",password)
+   set_ddns_ipv4_network_ipv4 =  x:set("network1","myddns_ipv4","ip_network",network_ipv4)
+   set_ddns_ipv4_ipv4_add_sou =   x:set("network1","myddns_ipv4","ip_source",ipv4_add_sou)
+   set_ipv_add4 =   x:set("network1","myddns_ipv4","ipv_add",ipv_add)
+   set_ipv_add6 =   x:set("network1","myddns_ipv6","ipv_add"," ")
+   set_ddns_ipv4_http_secure_textbox = x:set("network1","myddns_ipv4","http_secure_textbox",http_secure_textbox)
+   set_custom_update_url =   x:set("network1","myddns_ipv4","custom_update_url",custom_update_url)
+   set_custom_update_script = x:set("network1","myddns_ipv4","custom_update_script",custom_update_script)
+   set_encoded_parameter=x:set("network1","myddns_ipv4","encoded_parameter",encoded_parameter)
+   set_optional_parameter = x:set("network1","myddns_ipv4","optional_parameter",optional_parameter)
+   set_proxy_server=x:set("network1","myddns_ipv4","proxy_server",proxy_server)
+   set_check_interval=x:set("network1","myddns_ipv4","check_interval",check_interval)
+   set_force_interval=x:set("network1","myddns_ipv4","force_interval",force_interval)
+   set_error_retry_counter=x:set("network1","myddns_ipv4","error_retry_counter",error_retry_counter)
+   set_error_retry_interval=x:set("network1","myddns_ipv4","error_retry_interval",error_retry_interval)
+   set_access_control_enabled=x:set("network1","myddns_ipv4","access_control_enabled",access_control_enabled)
+   set_foc_ip_enabled=x:set("network1","myddns_ipv4","foc_ip_enabled",foc_ip_enabled)
+   set_log_to_file=x:set("network1","myddns_ipv4","log_to_file",log_to_file)
+   set_use_http_secure=x:set("network1","myddns_ipv4","use_http_secure",use_http_secure)
+   set_chk_int_time=x:set("network1","myddns_ipv4","chk_int_time",chk_int_time)
+   set_force_interval_time=x:set("network1","myddns_ipv4","force_interval_time",force_interval_time)
+   set_cbi_input_checkbox=x:set("network1","myddns_ipv4","cbi_input_checkbox",cbi_input_checkbox)
+   set_cbi_input_checkbox=x:set("network1","myddns_ipv6","cbi_input_checkbox"," ")
+
+   x:save("network1")
+   x:commit("network1")
+
+ end
+
+if ipv_add == '6' then
+
+    x:set("network1", "myddns_ipv6", "service")
+    x:save("network1")
+    x:commit("network1")
+
+    set_ddns_ipv_service_read =  x:set("network1", "myddns_ipv6", "service_name",ddns_service)
+    set_ddns_ipv6_lookup_hostname =  x:set("network1","myddns_ipv6","lookup_host",lookup_hostname)
+    set_ddns_ipv6_domain =  x:set("network1","myddns_ipv6","domain",domain)
+    set_ddns_ipv6_username = x:set("network1","myddns_ipv6","username",username)
+    set_ddns_ipv6_password =  x:set("network1","myddns_ipv6","password",password)
+    set_ddns_ipv6_1 =  x:set("network1","myddns_ipv6","use_ipv6","1")
+    set_ddns_ipv6_network_ipv4 = x:set("network1","myddns_ipv6","ip_network",network_ipv4)
+    set_ddns_ipv6_ipv4_add_sou = x:set("network1","myddns_ipv6","ip_source",ipv4_add_sou)
+    set_ipv_add6 =   x:set("network1","myddns_ipv6","ipv_add",ipv_add)
+    set_ipv_add4 =   x:set("network1","myddns_ipv4","ipv_add"," ")
+    set_ddns_ipv6_http_secure_textbox = x:set("network1","myddns_ipv6","http_secure_textbox",http_secure_textbox)
+    set_custom_update_url =   x:set("network1","myddns_ipv6","custom_update_url",custom_update_url)
+    set_custom_update_script= x:set("network1","myddns_ipv6","custom_update_script",custom_update_script)
+    set_encoded_parameter=x:set("network1","myddns_ipv6","encoded_parameter",encoded_parameter)
+    set_optional_parameter = x:set("network1","myddns_ipv6","optional_parameter",optional_parameter)
+    set_proxy_server=x:set("network1","myddns_ipv6","proxy_server",proxy_server)
+    set_check_interval=x:set("network1","myddns_ipv6","check_interval",check_interval)
+    set_force_interval=x:set("network1","myddns_ipv6","force_interval",force_interval)
+    set_error_retry_counter=x:set("network1","myddns_ipv6","error_retry_counter",error_retry_counter)
+    set_error_retry_interval=x:set("network1","myddns_ipv6","error_retry_interval",error_retry_interval)
+    set_access_control_enabled=x:set("network1","myddns_ipv6","access_control_enabled",access_control_enabled)
+    set_foc_ip_enabled=x:set("network1","myddns_ipv6","foc_ip_enabled",foc_ip_enabled)
+    set_log_to_file=x:set("network1","myddns_ipv6","log_to_file",log_to_file)
+    set_use_http_secure=x:set("network1","myddns_ipv6","use_http_secure",use_http_secure)
+    set_chk_int_time=x:set("network1","myddns_ipv6","chk_int_time",chk_int_time)
+    set_force_interval_time=x:set("network1","myddns_ipv6","force_interval_time",force_interval_time)
+    set_cbi_input_checkbox=x:set("network1","myddns_ipv6","cbi_input_checkbox",cbi_input_checkbox)
+    set_cbi_input_checkbox=x:set("network1","myddns_ipv4","cbi_input_checkbox"," ")
+
+    x:save("network1")
+    x:commit("network1")
+    end
+
+
+
+end
+
+
+
+--print("")
+--print("set_access_control_enabled: ",access_control_enabled)
+--os.exit(1)
+
+
+local ddns_table={}
+i=1
+x:foreach("network1", "service", function(s)
+ddns_table[i]={}
+for key, value in pairs(s) do
+	ddns_table[i][key]=value
+end
+i=i+1
+end)
+
+
+
+
+
+
+
+
+
+
+get_ddns_ipv4_service_read = x:get("network1", "myddns_ipv4", "service_name")
+get_ddns_ipv4_lookup_hostname = x:get("network1", "myddns_ipv4", "lookup_host")
+get_ddns_ipv4_domain = x:get("network1", "myddns_ipv4", "domain")
+get_ddns_ipv4_username = x:get("network1", "myddns_ipv4", "username")
+get_ddns_ipv4_password = x:get("network1", "myddns_ipv4", "password")
+get_ddns_ipv4_network_ipv4 = x:get("network1", "myddns_ipv4", "ip_network")
+get_ddns_ipv4_ipv4_add_sou = x:get("network1", "myddns_ipv4", "ip_source")
+get_ipv_add4 = x:get("network1", "myddns_ipv4", "ipv_add")
+get_ddns_ipv4_http_secure_textbox=x:get("network1", "myddns_ipv4", "http_secure_textbox")
+get_custom_update_url_ipv4=x:get("network1", "myddns_ipv4", "custom_update_url")
+get_custom_update_script_ipv4=x:get("network1", "myddns_ipv4", "custom_update_script")
+get_encoded_parameter_ipv4 = x:get("network1", "myddns_ipv4", "encoded_parameter")
+get_optional_parameter_ipv4=x:get("network1", "myddns_ipv4", "optional_parameter")
+get_proxy_server_ipv4=x:get("network1", "myddns_ipv4", "proxy_server")
+get_check_interval_ipv4=x:get("network1", "myddns_ipv4", "check_interval")
+get_force_interval_ipv4=x:get("network1", "myddns_ipv4", "force_interval")
+get_error_retry_counter_ipv4=x:get("network1", "myddns_ipv4", "error_retry_counter")
+get_error_retry_interval_ipv4=x:get("network1", "myddns_ipv4", "error_retry_interval")
+get_access_control_enabled_ipv4=x:get("network1", "myddns_ipv4", "access_control_enabled")
+get_foc_ip_enabled_ipv4=x:get("network1", "myddns_ipv4", "foc_ip_enabled")
+get_log_to_file_ipv4=x:get("network1", "myddns_ipv4", "log_to_file")
+get_use_http_secure_ipv4=x:get("network1", "myddns_ipv4", "use_http_secure")
+get_chk_int_time_ipv4=x:get("network1", "myddns_ipv4", "chk_int_time")
+get_force_interval_time_ipv4=x:get("network1", "myddns_ipv4", "force_interval_time")
+get_cbi_input_checkbox_ipv4=x:get("network1", "myddns_ipv4", "cbi_input_checkbox")
+
+
+get_ddns_ipv6_service_read = x:get("network1", "myddns_ipv6", "service_name")
+get_ddns_ipv6_lookup_hostname = x:get("network1", "myddns_ipv6", "lookup_host")
+get_ddns_ipv6_username = x:get("network1", "myddns_ipv6", "username")
+get_ddns_ipv6_password = x:get("network1", "myddns_ipv6", "password")
+get_ddns_ipv6_1 = x:get("network1", "myddns_ipv4", "1")
+get_ddns_ipv6_network_ipv4 = x:get("network1", "myddns_ipv6", "ip_network")
+get_ddns_ipv6_ipv4_add_sou = x:get("network1", "myddns_ipv6", "ip_source")
+get_ddns_ipv6_domain = x:get("network1","myddns_ipv6","domain")
+get_ipv_add6 = x:get("network1", "myddns_ipv6", "ipv_add")
+get_ddns_ipv6_http_secure_textbox=x:get("network1", "myddns_ipv6", "http_secure_textbox")
+get_custom_update_url_ipv6=x:get("network1", "myddns_ipv6", "custom_update_url")
+get_custom_update_script_ipv6=x:get("network1", "myddns_ipv6", "custom_update_script")
+get_encoded_parameter_ipv6 = x:get("network1", "myddns_ipv6", "encoded_parameter")
+get_optional_parameter_ipv6=x:get("network1", "myddns_ipv6", "optional_parameter")
+get_proxy_server_ipv6=x:get("network1", "myddns_ipv6", "proxy_server")
+get_check_interval_ipv6=x:get("network1", "myddns_ipv6", "check_interval")
+get_force_interval_ipv6=x:get("network1", "myddns_ipv6", "force_interval")
+get_error_retry_counter_ipv6=x:get("network1", "myddns_ipv6", "error_retry_counter")
+get_error_retry_interval_ipv6=x:get("network1", "myddns_ipv6", "error_retry_interval")
+get_access_control_enabled_ipv6=x:get("network1", "myddns_ipv6", "access_control_enabled")
+get_foc_ip_enabled_ipv6=x:get("network1", "myddns_ipv6", "foc_ip_enabled")
+get_log_to_file_ipv6=x:get("network1", "myddns_ipv6", "log_to_file")
+get_use_http_secure_ipv6=x:get("network1", "myddns_ipv6", "use_http_secure")
+get_chk_int_time_ipv6=x:get("network1", "myddns_ipv6", "chk_int_time")
+get_force_interval_time_ipv6=x:get("network1", "myddns_ipv6", "force_interval_time")
+get_cbi_input_checkbox_ipv6=x:get("network1", "myddns_ipv6", "cbi_input_checkbox")
+--print("")
+--print("set_ddns_ipv4_http_secure_textbox: ",set_ddns_ipv4_http_secure_textbox)
+--print("set_ddns_ipv6_http_secure_textbox: ",set_ddns_ipv6_http_secure_textbox)
+--os.exit(1)
+
+
+--print("")
+--print("get_cbi_input_checkbox_ipv6: ",get_cbi_input_checkbox_ipv6)
+--os.exit(1)
+
+
+if get_ipv_add4 == '4' then
+
+    list.data = {send_ddns_table=ddns_table,send_ddns_ipv_lookup_hostname = get_ddns_ipv4_lookup_hostname,send_ddns_ipv_domain = get_ddns_ipv4_domain,send_ddns_ipv_username = get_ddns_ipv4_username,send_ddns_ipv=get_ipv_add4,send_ddns_ipv_password=get_ddns_ipv4_password,send_ddns_ipv_http_secure_textbox=get_ddns_ipv4_http_secure_textbox,send_custom_update_url=get_custom_update_url_ipv4,send_custom_update_script=get_custom_update_script_ipv4,send_encoded_parameter=get_encoded_parameter_ipv4,send_optional_parameter=get_optional_parameter_ipv4,send_proxy_server=get_proxy_server_ipv4,send_check_interval=get_check_interval_ipv4,send_force_interval=get_force_interval_ipv4,send_error_retry_counter=get_error_retry_counter_ipv4,send_error_retry_interval=get_error_retry_interval_ipv4,send_access_control_enabled=get_access_control_enabled_ipv4,send_set_ddns_ipv_service_read=get_ddns_ipv4_service_read,send_foc_ip_enabled=get_foc_ip_enabled_ipv4,send_log_to_file=get_log_to_file_ipv4,send_use_http_secure=get_use_http_secure_ipv4,send_chk_int_time=get_chk_int_time_ipv4,send_error_retry_interval_time=get_force_interval_time_ipv4,send_cbi_input_checkbox=get_cbi_input_checkbox_ipv4}
+
+end
+
+if get_ipv_add4 ~= '4' then
+
+    list.data={send_ddns_table=ddns_table,send_ddns_ipv_lookup_hostname = get_ddns_ipv6_lookup_hostname,send_ddns_ipv_domain = get_ddns_ipv6_domain,send_ddns_ipv_username = get_ddns_ipv6_username,send_ddns_ipv=get_ipv_add6,send_ddns_ipv_password=get_ddns_ipv6_password,send_ddns_ipv_http_secure_textbox=get_ddns_ipv6_http_secure_textbox,send_custom_update_url=get_custom_update_url_ipv6,send_custom_update_script=get_custom_update_script_ipv6,send_encoded_parameter=get_encoded_parameter_ipv6,send_optional_parameter=get_optional_parameter_ipv6,send_proxy_server=get_proxy_server_ipv6,send_check_interval=get_check_interval_ipv6,send_force_interval=get_force_interval_ipv6,send_error_retry_counter=get_error_retry_counter_ipv6,send_error_retry_interval=get_error_retry_interval_ipv6,send_access_control_enabled=get_access_control_enabled_ipv6,send_set_ddns_ipv_service_read=get_ddns_ipv6_service_read,send_foc_ip_enabled=get_foc_ip_enabled_ipv6,send_log_to_file=get_log_to_file_ipv6,send_use_http_secure=get_use_http_secure_ipv6,send_chk_int_time=get_chk_int_time_ipv6,send_cbi_input_checkbox=get_cbi_input_checkbox_ipv6}
+
+end
+
+return m
